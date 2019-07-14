@@ -290,7 +290,11 @@
                   <div class="settings_btn" @click="toggleSettings">
                     <Settings class="settings" />
                   </div>
-                  <div class="fullscreen_btn" @click="togglePip">
+                  <div
+                    class="fullscreen_btn"
+                    @click="togglePip"
+                    v-if="playerEvents.isPipAvailable"
+                  >
                     <Pip class="pip_btn" />
                   </div>
                   <div class="fullscreen_btn" @click="toggleFullscreen">
@@ -439,7 +443,8 @@ export default {
         isMouseOver: false,
         isFadeIn: false,
         isOverlayVisible: false,
-        overflowtimer: false
+        overflowtimer: false,
+        isPipAvailable: false
       },
       seekbar: {
         seekPosition: 0,
