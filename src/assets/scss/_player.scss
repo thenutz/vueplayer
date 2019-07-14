@@ -830,6 +830,22 @@
 				transition: all 0.3s ease;
 			}
 		}
+		&:not(.loaded){
+			&.overlay_off{
+				& .video_overlay{
+					& .gradient_container{
+						opacity: 0;
+					}
+					& .play_btn_wrapper{
+						opacity: 0;
+					}
+					& .controls_container{
+						opacity: 0;
+					}
+				}
+			}
+		}
+		
 	}
 }
 

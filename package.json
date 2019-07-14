@@ -10,9 +10,11 @@
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
     "core-js": "^2.5.7",
+    "debounce": "^1.2.0",
     "lodash": "^4.17.14",
     "lodash.defaultsdeep": "^4.6.1",
-    "vue": "^2.6.10"
+    "vue": "^2.6.10",
+    "vue-debounce": "^1.3.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.9.0",
