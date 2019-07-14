@@ -290,6 +290,9 @@
                   <div class="settings_btn" @click="toggleSettings">
                     <Settings class="settings" />
                   </div>
+                  <div class="fullscreen_btn" @click="togglePip">
+                    <Pip class="pip_btn" />
+                  </div>
                   <div class="fullscreen_btn" @click="toggleFullscreen">
                     <FullscreenExit v-if="playerStatus.isFullscreen" />
                     <Fullscreen v-else />
@@ -322,7 +325,7 @@ import ArrowLeft from "@/assets/svg/material/round-arrow-left.svg";
 import ArrowRight from "@/assets/svg/material/round-arrow-right.svg";
 import Close from "@/assets/svg/material/round-close.svg";
 import Checked from "@/assets/svg/material/round-checked.svg";
-import { setTimeout } from "timers";
+import Pip from "@/assets/svg/material/round-pip-alt.svg";
 export default {
   name: "Player",
   components: {
@@ -341,7 +344,8 @@ export default {
     ArrowLeft,
     Close,
     ArrowRight,
-    Checked
+    Checked,
+    Pip
   },
   props: {
     videoId: {
@@ -588,6 +592,11 @@ export default {
   },
   created() {},
   methods: {
+    togglePip() {
+      console.log("pip");
+      let videoELM = document.getElementById("th-video-" + this.videoId);
+      videoELM.requestPictureInPicture();
+    },
     timeFormated(seconds) {
       let d = Number(seconds);
       var h = Math.floor(d / 3600);
@@ -861,7 +870,7 @@ export default {
       }
     },
     mouseIsOver() {
-      let x;
+      /* let x;
       event.target.addEventListener(
         "mousemove",
         () => {
@@ -878,7 +887,7 @@ export default {
           }, 2000);
         },
         false
-      );
+      ); */
     },
     togglePlayPause() {
       if (this.playerEvents.isFadeIn && this.playerStatus.status !== "loaded") {

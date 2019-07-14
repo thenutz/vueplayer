@@ -635,7 +635,30 @@
 								display: flex;
 								flex-direction: row;
 
-								& .settings_btn,
+								& .settings_btn{
+									width: 36px;
+									height: 36px;
+									position: relative;
+									cursor: pointer;
+									& svg { 
+										position: absolute;
+										top: 50%;
+										left: 50%;
+										transform: rotate(90deg) translate(-50%, -50%);
+										transform-origin: 0 0;  
+										fill: #fff;
+										width: 26px;
+										height: 26px;
+										z-index: -1;
+									}
+
+									& .settings {
+										width: 20px;
+										height: 20px;
+									}
+								}
+
+								
 								& .fullscreen_btn {
 									width: 36px;
 									height: 36px;
@@ -646,17 +669,16 @@
 										position: absolute;
 										top: 50%;
 										left: 50%;
-										transform: rotate(90deg) translate(-50%, -50%);
-										transform-origin: 0 0;
+										transform:translate(-50%, -50%); 
 										fill: #fff;
 										width: 26px;
 										height: 26px;
 										z-index: -1;
 									}
 
-									& .settings {
-										width: 20px;
-										height: 20px;
+									& .pip_btn {
+										width: 24px;
+										height: 24px;
 									}
 								}
 							}
