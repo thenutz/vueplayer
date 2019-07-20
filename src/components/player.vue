@@ -135,7 +135,7 @@
           </div>
         </div>
         <div class="gradient_container"></div>
-        <div class="play_btn_wrapper">
+        <div class="play_btn_wrapper opac">
           <PlayCircle class="play" />
           <PauseCircle class="pause" />
         </div>
@@ -297,6 +297,20 @@
                   >
                     <Pip class="pip_btn" />
                   </div>
+                  <!-- <div
+                    class="fullscreen_btn"
+                    @click="castNow"
+                    v-if="playerEvents.isCastAvailable"
+                  >
+                    <Cast class="pip_btn" />
+                  </div>
+                  <div
+                    class="fullscreen_btn"
+                    @click="loadNow"
+                    v-if="playerEvents.isCastAvailable"
+                  >
+                    <CastConnected class="pip_btn" />
+                  </div> -->
                   <div class="fullscreen_btn" @click="toggleFullscreen">
                     <FullscreenExit v-if="playerStatus.isFullscreen" />
                     <Fullscreen v-else />
@@ -313,9 +327,9 @@
 </template>
 
 <script>
-import PlayCircle from "@/assets/svg/material/round-play-circle.svg";
+import PlayCircle from "@/assets/svg/material/round-play-filled.svg";
 import Play from "@/assets/svg/material/round-play.svg";
-import PauseCircle from "@/assets/svg/material/round-pause-circle.svg";
+import PauseCircle from "@/assets/svg/material/round-pause-filled.svg";
 import Pause from "@/assets/svg/material/round-pause.svg";
 import Next from "@/assets/svg/material/round-next.svg";
 import VolumeUp from "@/assets/svg/material/round-volume-up.svg";
@@ -330,6 +344,8 @@ import ArrowRight from "@/assets/svg/material/round-arrow-right.svg";
 import Close from "@/assets/svg/material/round-close.svg";
 import Checked from "@/assets/svg/material/round-checked.svg";
 import Pip from "@/assets/svg/material/round-pip-alt.svg";
+/* import Cast from "@/assets/svg/material/round-cast.svg";
+import CastConnected from "@/assets/svg/material/round-cast-connected.svg"; */
 export default {
   name: "Player",
   components: {
@@ -350,6 +366,8 @@ export default {
     ArrowRight,
     Checked,
     Pip
+    /* Cast,
+    CastConnected */
   },
   props: {
     videoId: {
@@ -380,6 +398,7 @@ export default {
   },
   data() {
     return {
+      cast: {},
       text: {
         quality: "Quality",
         speed: "Speed",
@@ -444,7 +463,8 @@ export default {
         isFadeIn: false,
         isOverlayVisible: false,
         overflowtimer: false,
-        isPipAvailable: false
+        isPipAvailable: false,
+        isCastAvailable: true
       },
       seekbar: {
         seekPosition: 0,
@@ -546,10 +566,10 @@ export default {
         videoElement.setAttribute("webkit-playsinline", "true");
         videoElement.setAttribute("playsinline", "true");
         videoElement.setAttribute("preload", "auto"); // auto|metadata|none
-        // videoElement.setAttribute("autoplay", "autoplay");
+        videoElement.setAttribute("autoplay", "autoplay");
         videoElement.setAttribute("poster", videoObject.posterUrl);
         videoElement.controls = false;
-        // videoElement.muted = true;
+        videoElement.muted = true;
         // create source element
         let videoElementSource = document.createElement("source");
         videoElementSource.type = "video/mp4";
@@ -572,23 +592,15 @@ export default {
 
         // event listeners
 
-        videoElement.addEventListener(
-          "waiting",
-          this.toggleBuffer("waiting"),
-          false
-        );
-        videoElement.addEventListener(
-          "playing",
-          this.toggleBuffer("playing"),
-          false
-        );
-        videoElement.addEventListener("timeupdate", this.onTimeUpdate, false);
-        videoElement.addEventListener("progress", this.onProgress, false);
-        videoElement.addEventListener(
-          "loadedmetadata",
-          this.metadataLoaded,
-          false
-        );
+        videoElement.addEventListener("waiting", this.toggleBuffer("waiting"));
+        videoElement.addEventListener("playing", this.toggleBuffer("playing"));
+        videoElement.addEventListener("timeupdate", this.onTimeUpdate);
+        videoElement.addEventListener("progress", this.onProgress);
+        videoElement.addEventListener("loadedmetadata", this.metadataLoaded);
+        if ("pictureInPictureEnabled" in document) {
+          this.playerEvents.isPipAvailable = true;
+          console.log("The Picture-in-Picture Web API is AVAILABLE.");
+        }
       } else {
         console.log("cant play mp4");
       }

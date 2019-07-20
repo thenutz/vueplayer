@@ -145,13 +145,11 @@
 			& .video_overlay {
 				& .play_btn_wrapper {
 					& .pause {
-						transform: scale(1) translate(-50%, -50%);
-						opacity: 1;
+						opacity: 0;
 					}
 
-					& .play {
-						transform: scale(0) translate(-50%, -50%);
-						opacity: 0;
+					& .play { 
+						animation: fade 0.5s ease-in-out; 
 					}
 				}
 			}
@@ -161,13 +159,11 @@
 			& .video_overlay {
 				& .play_btn_wrapper {
 					& .pause {
-						transform: scale(0) translate(-50%, -50%);
-						opacity: 0;
+						animation: fade 0.5s ease-in-out; 
 					}
 
 					& .play {
-						transform: scale(1) translate(-50%, -50%);
-						opacity: 1;
+						opacity: 0;
 					}
 				}
 			}
@@ -391,13 +387,13 @@
 					height: 100%;
 					display: block;
 					fill: currentColor;
-					filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.5));
+					filter: drop-shadow(0 0 30px rgb(0, 0, 0));
 					position: absolute;
 					top: 50%;
 					left: 50%;
-					transform: scale(1) translate(-50%, -50%);
-					transform-origin: top left;
+					transform: translate(-50%, -50%); 
 					transition: all 0.3s ease;
+					opacity: 0;
 				}
 			}
 
@@ -870,7 +866,7 @@
 		
 	}
 }
-
+ 
 //(xs: 0, sm: 576px, md: 768px, lg: 992px, xl: 1280px)
 @media screen and (min-width: 576px) {
 	.player_wrapper {
@@ -992,6 +988,27 @@
 @media screen and (min-width: 1280px) {}
 
 // animations
+@keyframes fade {
+	0%   { 
+		width: 100%;
+		height: 100%; 
+		opacity: 0; 
+	}   
+   25%   { 
+		opacity: .25; 
+	}
+   50%   { 
+		opacity: 1; 
+	}
+   50%   { 
+		opacity: .25; 
+	}
+  100% { 
+		width: 200%;
+		height: 200%; 
+		opacity: .0; 
+	}
+}
 @keyframes spin {
 	100% {
 		-webkit-transform: rotate(360deg);
