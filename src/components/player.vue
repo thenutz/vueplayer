@@ -139,7 +139,11 @@
           <PlayCircle class="play" />
           <PauseCircle class="pause" />
         </div>
-        <div class="controls_container">
+        <div
+          class="controls_container"
+          @mouseover="playerEvents.isControlsOver = true"
+          @mouseleave="playerEvents.isControlsOver = false"
+        >
           <div class="controls_wrapper">
             <div class="seek_wrapper">
               <div
@@ -297,20 +301,6 @@
                   >
                     <Pip class="pip_btn" />
                   </div>
-                  <!-- <div
-                    class="fullscreen_btn"
-                    @click="castNow"
-                    v-if="playerEvents.isCastAvailable"
-                  >
-                    <Cast class="pip_btn" />
-                  </div>
-                  <div
-                    class="fullscreen_btn"
-                    @click="loadNow"
-                    v-if="playerEvents.isCastAvailable"
-                  >
-                    <CastConnected class="pip_btn" />
-                  </div> -->
                   <div class="fullscreen_btn" @click="toggleFullscreen">
                     <FullscreenExit v-if="playerStatus.isFullscreen" />
                     <Fullscreen v-else />
@@ -321,7 +311,7 @@
           </div>
         </div>
       </div>
-      <div class="ad_wrapper"></div>
+      <div class="ad_wrapper">addddd</div>
     </div>
   </div>
 </template>
@@ -374,6 +364,10 @@ export default {
       default: null,
       type: String
     },
+    autoPlay: {
+      default: false,
+      type: Boolean
+    },
     aspectRatio: {
       default: "16:9",
       type: String,
@@ -398,7 +392,6 @@ export default {
   },
   data() {
     return {
-      cast: {},
       text: {
         quality: "Quality",
         speed: "Speed",
@@ -460,6 +453,7 @@ export default {
       },
       playerEvents: {
         isMouseOver: false,
+        isControlsOver: false,
         isFadeIn: false,
         isOverlayVisible: false,
         overflowtimer: false,
@@ -547,7 +541,7 @@ export default {
     setTimeout(() => {
       let videoObject = {
         type: false,
-        sourceUrl: "//player.thenutz.ro/samples/sample.mp4",
+        sourceUrl: "//player.thenutz.ro/samples/film.mp4",
         posterUrl:
           "//player.thenutz.ro/samples/93d1b16a81c9180a637b4dc6eade947d-xlarge.jpg",
         filmstripUrl: "//player.thenutz.ro/samples/film_sprite.png",
@@ -566,10 +560,12 @@ export default {
         videoElement.setAttribute("webkit-playsinline", "true");
         videoElement.setAttribute("playsinline", "true");
         videoElement.setAttribute("preload", "auto"); // auto|metadata|none
-        videoElement.setAttribute("autoplay", "autoplay");
+        if (this.autoPlay) {
+          videoElement.setAttribute("autoplay", "autoplay");
+          videoElement.muted = true;
+        }
         videoElement.setAttribute("poster", videoObject.posterUrl);
         videoElement.controls = false;
-        videoElement.muted = true;
         // create source element
         let videoElementSource = document.createElement("source");
         videoElementSource.type = "video/mp4";
@@ -599,7 +595,6 @@ export default {
         videoElement.addEventListener("loadedmetadata", this.metadataLoaded);
         if ("pictureInPictureEnabled" in document) {
           this.playerEvents.isPipAvailable = true;
-          console.log("The Picture-in-Picture Web API is AVAILABLE.");
         }
       } else {
         console.log("cant play mp4");
@@ -610,7 +605,6 @@ export default {
   created() {},
   methods: {
     togglePip() {
-      console.log("pip");
       let videoELM = document.getElementById("th-video-" + this.videoId);
       videoELM.requestPictureInPicture();
     },
@@ -632,7 +626,6 @@ export default {
       }
     },
     onProgress() {
-      console.log("on progress function");
       if (event.srcElement.readyState === 4) {
         var bufferProgress =
           (100 * event.srcElement.buffered.end(0)) / event.srcElement.duration;
@@ -641,8 +634,6 @@ export default {
       }
     },
     metadataLoaded() {
-      console.log("metadata loaded");
-      console.log(event);
       if (event.srcElement.muted) {
         this.playerStatus.volume.status = 0;
       }
@@ -655,7 +646,6 @@ export default {
         (100 / event.srcElement.duration) * event.srcElement.currentTime;
       this.seekbar.seekPosition = progress;
       this.videoData.currentTime = event.srcElement.currentTime;
-      // console.log(event);
     },
     toggleBuffer(tip) {
       console.log("toggle buffer " + tip);
@@ -699,7 +689,6 @@ export default {
     },
     toggleSettings() {
       if (this.playerStatus.settings.status) {
-        console.log("reset all settings windows");
         this.playerStatus.settings.onestep = false;
         this.playerStatus.settings.status = false;
       } else {
@@ -731,6 +720,8 @@ export default {
           container.mozRequestFullScreen();
         } else if (container.msRequestFullscreen) {
           container.msRequestFullscreen();
+        } else if (container.webkitEnterFullscreen) {
+          container.webkitEnterFullscreen();
         } else {
           /* if (navigator.userAgent.match(/iPad|iPhone|iPod/i)) {
 					  container.webkitEnterFullscreen();
@@ -758,6 +749,7 @@ export default {
         let perc = ((clickPosition * 100) / xyz.height - 100) * -1;
         this.playerStatus.volume.status = Math.round(perc);
         this.playerStatus.volume.previous = Math.round(perc);
+        videoELM.volume = (1 * perc) / 100;
         if (videoELM.muted) {
           videoELM.muted = false;
         }
@@ -783,7 +775,6 @@ export default {
       );
     },
     seekDown(location) {
-      console.log("seekdown");
       if (location === "seekbar") {
         document.addEventListener("mousemove", this.checkSeekbarDrag, false);
         this.seekbar.isDraging = true;
@@ -811,19 +802,16 @@ export default {
       }
     },
     setPause() {
-      // console.log("video paused");
       let videoELM = document.getElementById("th-video-" + this.videoId);
       videoELM.pause();
       this.playerStatus.status = "paused";
     },
     setPlay() {
-      // console.log("video start to play");
       let videoELM = document.getElementById("th-video-" + this.videoId);
       videoELM.play();
       this.playerStatus.status = "playing";
     },
     checkSeekbarDrag() {
-      console.log("check drag");
       let videoELM = document.getElementById("th-video-" + this.videoId);
       this.setPause();
       let x = event.pageX; //Y click position on entire page
@@ -873,7 +861,6 @@ export default {
       }
     },
     seekControl() {
-      console.log("seek control");
       let videoELEM = document.getElementById("th-video-" + this.videoId);
       let x = event.pageX; //Y click position on entire page
       let xyz = event.srcElement.getBoundingClientRect(); //element x,y,z,width and height
@@ -887,24 +874,27 @@ export default {
       }
     },
     mouseIsOver() {
-      /* let x;
+      let x;
       event.target.addEventListener(
         "mousemove",
         () => {
           if (!this.playerEvents.isFadeIn) {
             if (x) {
               clearTimeout(x._id);
+              clearTimeout(x);
             }
           } else {
             this.playerEvents.isFadeIn = false;
           }
 
           x = setTimeout(() => {
-            this.playerEvents.isFadeIn = true;
-          }, 2000);
+            if (this.playerEvents.isControlsOver !== true && this.playerStatus.settings.status  !== true) {
+              this.playerEvents.isFadeIn = true;
+            }
+          }, 3000);
         },
         false
-      ); */
+      );
     },
     togglePlayPause() {
       if (this.playerEvents.isFadeIn && this.playerStatus.status !== "loaded") {

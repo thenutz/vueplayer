@@ -814,6 +814,7 @@
 		}
 
 		& .ad_wrapper {
+			color: #fff;
 			background: #000;
 			width: 100%;
 			height: 100%;
@@ -851,6 +852,7 @@
 		&:not(.loaded){
 			&.overlay_off{
 				& .video_overlay{
+					cursor: none;
 					& .gradient_container{
 						opacity: 0;
 					}
