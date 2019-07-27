@@ -43,7 +43,8 @@
         }"
         @click.self="togglePlayPause"
         :id="'player-overlay-' + videoId"
-        @mouseover="(playerEvents.isMouseOver = true), mouseIsOver()"
+        @mousemove="mouseIsOver()"
+        @mouseover="playerEvents.isMouseOver = true"
         @mouseleave="playerEvents.isMouseOver = false"
       >
         <div class="settings_container" v-if="playerStatus.settings.status">
@@ -888,10 +889,13 @@ export default {
           }
 
           x = setTimeout(() => {
-            if (this.playerEvents.isControlsOver !== true && this.playerStatus.settings.status  !== true) {
+            if (
+              this.playerEvents.isControlsOver !== true &&
+              this.playerStatus.settings.status !== true
+            ) {
               this.playerEvents.isFadeIn = true;
             }
-          }, 3000);
+          }, 2500);
         },
         false
       );

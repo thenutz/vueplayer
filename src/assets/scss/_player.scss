@@ -171,7 +171,9 @@
 
 		&.settings_on {
 			& .video_overlay {
-				& .settings_container {}
+				& .settings_container {
+					color: inherit;
+				}
 
 				& .gradient_container,
 				& .play_btn_wrapper,
